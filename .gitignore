@@ -21,3 +21,10 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+src/App.css
+src/App.test.js
+src/logo.svg
+src/componenets/TopBar.js
+src/container/App.js
+src/pages/LoginPage.js
+src/shared/ApiProgress.js

@@ -2,11 +2,18 @@ import React, { Component } from "react";
 import logo from "../assets/hoaxify.png";
 import { Link } from "react-router-dom";
 import { withTranslation } from "react-i18next";
+import { Authentication } from "../shared/AuthenticationContext";
 
 class TopBar extends Component {
+  static contextType = Authentication;
   render() {
-    const { t, isLoggedIn, username, onLogoutSuccess } = this.props;
-
+    //TopBar icin t => withTranslate, isLoggedIn -> App.js'ten gelen loggin isleminin dogrulugunu kontrol ediyor true false doner
+    //username => giris yapan kullanici ismini App.js'ten alarak TopBara yazmak icin,
+    //onLogoutSuccess => Cikisi gerceklesen kullanicinin sonucunu true false doner.
+    // const { t, isLoggedIn, username, onLogoutSuccess } = this.props;
+    const { t } = this.props;
+    const { state, onLogoutSuccess } = this.context;
+    const { isLoggedIn, username } = state;
     let links = (
       <ul className="navbar-nav ml-auto">
         <li>
@@ -25,6 +32,7 @@ class TopBar extends Component {
       links = (
         <ul className="navbar-nav ml-auto">
           <li>
+            {/* Login olmus kullanici icin bir link ekledik /user/user1*/}
             <Link className="nav-link" to={`/user/${username}`}>
               {username}
             </Link>
@@ -32,7 +40,7 @@ class TopBar extends Component {
           <li
             className="nav-link"
             style={{ cursor: "pointer" }}
-            onClick={onLogoutSuccess}
+            onClick={onLogoutSuccess} // Logouta tikladigmizda App.js'teki state'i guncellemis olduk
           >
             {t("Logout")}
           </li>
