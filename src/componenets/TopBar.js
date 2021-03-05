@@ -2,18 +2,15 @@ import React, { Component } from "react";
 import logo from "../assets/hoaxify.png";
 import { Link } from "react-router-dom";
 import { withTranslation } from "react-i18next";
-import { Authentication } from "../shared/AuthenticationContext";
+import { connect } from "react-redux";
+// import { Authentication } from "../shared/AuthenticationContext";
+import { logoutSuccess } from "../redux/authActions";
 
 class TopBar extends Component {
-  static contextType = Authentication;
+  // static contextType = Authentication;
+
   render() {
-    //TopBar icin t => withTranslate, isLoggedIn -> App.js'ten gelen loggin isleminin dogrulugunu kontrol ediyor true false doner
-    //username => giris yapan kullanici ismini App.js'ten alarak TopBara yazmak icin,
-    //onLogoutSuccess => Cikisi gerceklesen kullanicinin sonucunu true false doner.
-    // const { t, isLoggedIn, username, onLogoutSuccess } = this.props;
-    const { t } = this.props;
-    const { state, onLogoutSuccess } = this.context;
-    const { isLoggedIn, username } = state;
+    const { t, username, isLoggedIn, onLogoutSuccess } = this.props;
     let links = (
       <ul className="navbar-nav ml-auto">
         <li>
@@ -40,7 +37,7 @@ class TopBar extends Component {
           <li
             className="nav-link"
             style={{ cursor: "pointer" }}
-            onClick={onLogoutSuccess} // Logouta tikladigmizda App.js'teki state'i guncellemis olduk
+            onClick={onLogoutSuccess}
           >
             {t("Logout")}
           </li>
@@ -60,4 +57,25 @@ class TopBar extends Component {
     );
   }
 }
-export default withTranslation()(TopBar);
+
+const TopBarWithTranslation = withTranslation()(TopBar);
+
+const mapStateToProps = (store) => {
+  return {
+    isLoggedIn: store.isLoggedIn,
+    username: store.username,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onLogoutSuccess: () => {
+      dispatch(logoutSuccess());
+    },
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(TopBarWithTranslation);

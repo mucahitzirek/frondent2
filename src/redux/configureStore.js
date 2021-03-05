@@ -1,16 +1,43 @@
+import { createStore, applyMiddleware, compose } from "redux";
 import authReducer from "./authReducer";
-import { createStore } from "redux";
+import SecureLS from "secure-ls";
+import thunk from "redux-thunk";
+const secureLs = new SecureLS();
 
-const defaultState = {
-  isLoggedIn: true,
-  username: "user1",
-  displayName: "display1",
-  image: null,
-  password: "P4ssword",
+const getStateFromStorage = () => {
+  const hoaxAuth = secureLs.get("hoax-auth");
+
+  let stateInLocalStorage = {
+    isLoggedIn: false,
+    username: undefined,
+    displayName: undefined,
+    image: undefined,
+    password: undefined,
+  };
+  if (hoaxAuth) {
+    try {
+      return hoaxAuth;
+    } catch {}
+  }
+  return stateInLocalStorage;
 };
 
+const updateStateInStorage = (newState) => {
+  secureLs.set("hoax-auth", newState);
+};
 const configureStore = () => {
-  return createStore(authReducer, loggedInState);
+  const composeEnhancers =
+    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
+  const store = createStore(
+    authReducer,
+    getStateFromStorage(),
+    composeEnhancers(applyMiddleware(thunk))
+  );
+  store.subscribe(() => {
+    updateStateInStorage(store.getState());
+  });
+  return store;
 };
 
 export default configureStore;

@@ -4,7 +4,7 @@ import UserSignupPage from "../pages/UserSignupPage";
 import LoginPage from "../pages/LoginPage";
 import HomePage from "../pages/HomePage";
 import UserPage from "../pages/UserPage";
-import { Authentication } from "../shared/AuthenticationContext";
+// import { Authentication } from "../shared/AuthenticationContext";
 import {
   HashRouter as Router,
   Redirect,
@@ -12,28 +12,23 @@ import {
   Route,
 } from "react-router-dom";
 import TopBar from "../componenets/TopBar";
+import { connect } from "react-redux";
 
 class App extends React.Component {
-  static contextType = Authentication;
+  // static contextType = Authentication;
 
   render() {
-    const isLoggedIn = this.context.state.isLoggedIn;
+    const { isLoggedIn } = this.props;
 
     return (
       <div>
         <Router>
           <TopBar />
           <Switch>
-            {/* exact sadece bu pathte componentte belirtileni gostermesini saglar`1 */}
-            <Route exact path="/" component={HomePage}></Route>
-            {!isLoggedIn && ( // !isLoggedIn && neden ekledik ?
-              // mesela giris yaptik, ancak linkten logine gitmek istedigmizde goturyordu ve
-              //login yapan user bilgisi kaliyordu bunu engellemek icin yaptik Default Redirect linki olmus oldu
-              <Route path="/login" component={LoginPage} />
-            )}
-            <Route path="/signup" component={UserSignupPage}></Route>
-            <Route path="/user/:username" component={UserPage}></Route>
-            {/* yukaridaki pathlerden hicbiriyle match etmesse Redirect calisacak */}
+            <Route exact path="/" component={HomePage} />
+            {!isLoggedIn && <Route path="/login" component={LoginPage} />}
+            <Route path="/signup" component={UserSignupPage} />
+            <Route path="/user/:username" component={UserPage} />
             <Redirect to="/" />
           </Switch>
         </Router>
@@ -42,5 +37,10 @@ class App extends React.Component {
     );
   }
 }
+const mapStateToProps = (store) => {
+  return {
+    isLoggedIn: store.isLoggedIn,
+  };
+};
 
-export default App;
+export default connect(mapStateToProps)(App);

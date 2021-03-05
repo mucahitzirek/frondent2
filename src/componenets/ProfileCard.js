@@ -1,33 +1,31 @@
 import React from "react";
 import { withRouter } from "react-router-dom";
-import { Authentication } from "../shared/AuthenticationContext";
-
+// import { Authentication } from "../shared/AuthenticationContext";
+import { connect } from "react-redux";
 const ProfileCard = (props) => {
-  return (
-    <Authentication.Consumer>
-      {(value) => {
-        const pathUsername = props.match.params.username;
-        const loggedInUsername = value.state.username;
-        let message = "We cannot edit";
-        if (pathUsername === loggedInUsername) {
-          message = "We can edit";
-        }
-        return <div>{message}</div>;
-      }}
-    </Authentication.Consumer>
-  );
+  const pathUsername = props.match.params.username;
+  let message = "We cannot edit";
+  if (pathUsername === props.loggedInUsername) {
+    message = "We can edit";
+  }
+  return <div>{message}</div>;
 };
 
-class ProfileCardContextWrapper extends React.Component {
-  static contextType = Authentication;
-  render() {
-    return (
-      <ProfileCard
-        {...this.props}
-        username={this.context.state.username}
-      ></ProfileCard>
-    );
-  }
-}
+// class ProfileCardContextWrapper extends React.Component {
+//   static contextType = Authentication;
+//   render() {
+//     return (
+//       <ProfileCard
+//         {...this.props}
+//         username={this.context.state.username}
+//       ></ProfileCard>
+//     );
+//   }
+// }
+const mapStateToProps = (store) => {
+  return {
+    loggedInUsername: store.username,
+  };
+};
 
-export default withRouter(ProfileCardContextWrapper);
+export default connect(mapStateToProps)(withRouter(ProfileCard));
